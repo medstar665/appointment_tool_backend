@@ -10,11 +10,14 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 @Component
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class CorsResponseFilter implements Filter {
-	
+
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
@@ -22,6 +25,9 @@ public class CorsResponseFilter implements Filter {
 		HttpServletResponse res = (HttpServletResponse) response;
 
 		res.addHeader("Access-Control-Allow-Origin", "*");
+		res.addHeader("Access-Control-Allow-Credentials", "true");
+		res.addHeader("Access-Control-Allow-Headers", "origin, content-type, accept, authorization, AuthToken");
+		res.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD");
 		chain.doFilter(req, res);
 	}
 
