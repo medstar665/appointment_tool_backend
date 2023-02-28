@@ -31,7 +31,7 @@ public class AuthTokenReqFilter extends OncePerRequestFilter {
 //		System.out.println(request.getRequestURI());
 //		System.out.println(request.getRequestURL().toString());
 		if (!whilteListedPath.contains(request.getRequestURI())) {
-			String authToken = request.getHeader("authorization");
+			String authToken = request.getHeader("authtoken");
 			try {
 				userManagement.validateToken(authToken);
 			} catch (SystemUserException e) {
