@@ -1,5 +1,8 @@
 package com.appointment.booking.appointmentBooking.service;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 import com.appointment.booking.appointmentBooking.dto.AppointmentDto;
 import com.appointment.booking.appointmentBooking.dto.CustomerDto;
 import com.appointment.booking.appointmentBooking.dto.FacilityDto;
@@ -26,6 +29,10 @@ public abstract class CommonService {
 				.facility(getDtoFromEntity(appointment.getFacility()))
 				.appointmentDateTime(appointment.getAppointmentDateTime()).status(appointment.getStatus().getValue())
 				.duration(appointment.getDuration()).color(appointment.getColor()).build();
+	}
+
+	protected Pageable getPageable(int pageNum, int pageSize) {
+		return PageRequest.of(pageNum - 1, pageSize);
 	}
 
 }

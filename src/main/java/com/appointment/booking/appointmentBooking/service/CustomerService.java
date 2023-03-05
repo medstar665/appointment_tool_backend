@@ -3,11 +3,13 @@ package com.appointment.booking.appointmentBooking.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.appointment.booking.appointmentBooking.constants.ResponseMessages;
 import com.appointment.booking.appointmentBooking.dto.CustomerDto;
+import com.appointment.booking.appointmentBooking.dto.PaginationResultDto;
 import com.appointment.booking.appointmentBooking.exception.CustomerException;
 import com.appointment.booking.appointmentBooking.model.Customer;
 import com.appointment.booking.appointmentBooking.repository.CustomerRepository;
@@ -34,24 +36,32 @@ public class CustomerService extends CommonService implements ICustomerService {
 	}
 
 	@Override
-	public List<CustomerDto> getAllCustomers(String search, boolean justName) {
+	public PaginationResultDto<CustomerDto> getAllCustomers(Integer pageNum, Integer pageSize, String search,
+			boolean justName) {
 		List<Customer> customers;
-		if (CommonUtil.isEmptyString(search)) {
-			if(justName) {
+		Long totalCustomers = null;
+		if (justName) {
+			if (CommonUtil.isEmptyString(search)) {
 				customers = customerRepo.findAllNames();
-			} else {				
-				customers = customerRepo.findAll();
+			} else {
+				customers = customerRepo.findAllNamesWithFilter(search);
 			}
 		} else {
-			if(justName) {
-				customers = customerRepo.findAllNamesWithFilter(search);
-			} else {				
+			if (CommonUtil.isEmptyString(search)) {
+				Page<Customer> pageResult= customerRepo.findAll(getPageable(pageNum, pageSize));
+				totalCustomers = pageResult.getTotalElements();
+				customers = pageResult.getContent();
+			} else {
+				totalCustomers = customerRepo
+						.countByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrEmailContainingIgnoreCase(
+								search, search, search);
 				customers = customerRepo
 						.findAllByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrEmailContainingIgnoreCase(
-								search, search, search);
+								search, search, search, getPageable(pageNum, pageSize));
 			}
 		}
-		return customers.stream().map(this::getDtoFromEntity).collect(Collectors.toList());
+		return PaginationResultDto.<CustomerDto>builder().totalResult(totalCustomers)
+				.result(customers.stream().map(this::getDtoFromEntity).collect(Collectors.toList())).build();
 	}
 
 	@Override

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.appointment.booking.appointmentBooking.constants.ResponseMessages;
 import com.appointment.booking.appointmentBooking.dto.FacilityDto;
+import com.appointment.booking.appointmentBooking.dto.PaginationResultDto;
 import com.appointment.booking.appointmentBooking.exception.FacilityException;
 import com.appointment.booking.appointmentBooking.service.IFacilityService;
 
@@ -40,14 +41,8 @@ public class FacilityController extends BaseController {
 	}
 
 	@GetMapping("/facilities")
-	public ResponseEntity<?> getAllFacilities(@RequestParam(required = false) String search) {
-		List<FacilityDto> facilites = facilityService.getAllFacility(search, false);
-		return ResponseEntity.ok(facilites);
-	}
-
-	@GetMapping("/facility/titles")
-	public ResponseEntity<?> getAllFacilitieTitles(@RequestParam(required = false) String search) {
-		List<FacilityDto> facilites = facilityService.getAllFacility(search, true);
+	public ResponseEntity<?> getAllFacilities(@RequestParam(defaultValue = "1") int pageNum, @RequestParam(defaultValue = "10") int pageSize, @RequestParam(required = false) String search) {
+		PaginationResultDto<FacilityDto> facilites = facilityService.getAllFacility(pageNum, pageSize, search);
 		return ResponseEntity.ok(facilites);
 	}
 

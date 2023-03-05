@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.appointment.booking.appointmentBooking.constants.AppointmentStatus;
 import com.appointment.booking.appointmentBooking.constants.ResponseMessages;
 import com.appointment.booking.appointmentBooking.dto.AppointmentDto;
+import com.appointment.booking.appointmentBooking.dto.PaginationResultDto;
 import com.appointment.booking.appointmentBooking.exception.AppointmentException;
 import com.appointment.booking.appointmentBooking.model.Appointment;
 import com.appointment.booking.appointmentBooking.repository.AppointmentRepository;
@@ -32,18 +33,21 @@ public class AppointmentService extends CommonService implements IAppointmentSer
 	}
 
 	@Override
-	public List<AppointmentDto> getAllAppointments(String search, LocalDateTime startDate, LocalDateTime endDate) {
-		if(startDate != null || endDate != null) {
-			if(startDate == null) {
-				startDate = LocalDateTime.MIN;
+	public PaginationResultDto<AppointmentDto> getAllAppointments(Integer pageNum, Integer pageSize, String search,
+			LocalDateTime startDate, LocalDateTime endDate) {
+		if (startDate != null || endDate != null) {
+			if (startDate == null) {
+				startDate = LocalDateTime.of(2020, 1, 1, 0, 0);
 			}
-			if(endDate == null) {
-				endDate = LocalDateTime.MAX;
+			if (endDate == null) {
+				endDate = LocalDateTime.of(2500, 1, 1, 0, 0);
 			}
 		}
-		List<Appointment> appointments = appointmentRepo.searchAppointment(search, startDate, endDate);		
-		appointments.sort(Comparator.comparing(Appointment::getAppointmentDateTime));
-		return appointments.stream().map(this::getDtoFromEntity).collect(Collectors.toList());
+		Long totalAppointments = appointmentRepo.getTotalAppointment(search, startDate, endDate);
+		List<Appointment> appointments = appointmentRepo.searchAppointment(pageNum, pageSize, search, startDate,
+				endDate);
+		return PaginationResultDto.<AppointmentDto>builder().totalResult(totalAppointments)
+				.result(appointments.stream().map(this::getDtoFromEntity).collect(Collectors.toList())).build();
 	}
 
 	@Override

@@ -7,6 +7,8 @@ import com.appointment.booking.appointmentBooking.model.Appointment;
 
 public interface AppointmentCustomRepository {
 
-	List<Appointment> searchAppointment(String keyword, LocalDateTime startDate, LocalDateTime endDate);
+	List<Appointment> searchAppointment(Integer pageNum, Integer pageSize, String keyword, LocalDateTime startDate, LocalDateTime endDate);
+
+	Long getTotalAppointment(String keyword, LocalDateTime startDate, LocalDateTime endDate);
 	
 }

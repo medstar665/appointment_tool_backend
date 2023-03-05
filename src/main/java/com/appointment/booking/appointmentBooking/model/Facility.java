@@ -13,12 +13,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Entity(name = "Facility")
 @Table(name = "Facilities")
 @Data
-@NoArgsConstructor
+//@NoArgsConstructor
 public class Facility {
 
 	@Id
@@ -43,13 +42,13 @@ public class Facility {
 	@OneToMany(mappedBy = "facility", cascade = CascadeType.ALL, orphanRemoval = false, fetch = FetchType.LAZY)
 	private List<Appointment> appointments;
 
-	public Facility(int id, String title, String description, String color) {
-		super();
-		this.id = id;
-		this.title = title;
-		this.description = description;
-		this.color = color;
-	}
+//	public Facility(int id, String title, String description, String color) {
+//		super();
+//		this.id = id;
+//		this.title = title;
+//		this.description = description;
+//		this.color = color;
+//	}
 
 	@Override
 	public boolean equals(Object obj) {

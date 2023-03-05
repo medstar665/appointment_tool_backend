@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.appointment.booking.appointmentBooking.constants.AppointmentStatus;
 import com.appointment.booking.appointmentBooking.constants.ResponseMessages;
 import com.appointment.booking.appointmentBooking.dto.AppointmentDto;
+import com.appointment.booking.appointmentBooking.dto.PaginationResultDto;
 import com.appointment.booking.appointmentBooking.exception.AppointmentException;
 import com.appointment.booking.appointmentBooking.exception.CustomException;
 import com.appointment.booking.appointmentBooking.service.IAppointmentService;
@@ -51,20 +52,26 @@ public class AppointmentController extends BaseController {
 	}
 
 	@GetMapping("/appointments")
-	public ResponseEntity<?> getAllAppointments(@RequestParam(required = false) String search, @RequestParam(required = false) @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime startDate, @RequestParam(required = false) @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime endDate) {
-		List<AppointmentDto> appointments = appointmentService.getAllAppointments(search, startDate, endDate);
+	public ResponseEntity<?> getAllAppointments(@RequestParam(defaultValue = "1") int pageNum,
+			@RequestParam(defaultValue = "10") int pageSize, @RequestParam(required = false) String search,
+			@RequestParam(required = false) @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime startDate,
+			@RequestParam(required = false) @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime endDate) {
+		PaginationResultDto<AppointmentDto> appointments = appointmentService.getAllAppointments(pageNum, pageSize,
+				search, startDate, endDate);
 		return ResponseEntity.ok(appointments);
 	}
 
 	@GetMapping(value = "/appointments-download")
-	public ResponseEntity<?> downloadAppointments(@RequestParam(required = false) String search, @RequestParam(required = false) @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime startDate, @RequestParam(required = false) @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime endDate) {
-		List<AppointmentDto> appointments = appointmentService.getAllAppointments(search, startDate, endDate);
-		ByteArrayInputStream file = excelService.getExportableExcel(appointments);
+	public ResponseEntity<?> downloadAppointments(@RequestParam(required = false) String search,
+			@RequestParam(required = false) @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime startDate,
+			@RequestParam(required = false) @DateTimeFormat(iso = ISO.DATE_TIME) LocalDateTime endDate) {
+		PaginationResultDto<AppointmentDto> appointments = appointmentService.getAllAppointments(null, null, search,
+				startDate, endDate);
+		ByteArrayInputStream file = excelService.getExportableExcel(appointments.getResult());
 		InputStreamResource resource = new InputStreamResource(file);
 		String filename = "Appointments.xlsx";
-		return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="+filename)
-				.contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
-				.body(resource);
+		return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+				.contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(resource);
 	}
 
 	@PostMapping("/appointment")

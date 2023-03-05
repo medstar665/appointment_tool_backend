@@ -1,10 +1,9 @@
 package com.appointment.booking.appointmentBooking.service;
 
-import java.util.List;
-
 import org.springframework.transaction.annotation.Transactional;
 
 import com.appointment.booking.appointmentBooking.dto.FacilityDto;
+import com.appointment.booking.appointmentBooking.dto.PaginationResultDto;
 import com.appointment.booking.appointmentBooking.exception.FacilityException;
 import com.appointment.booking.appointmentBooking.model.Facility;
 
@@ -14,7 +13,7 @@ public interface IFacilityService {
 
 	public FacilityDto getFacility(int id) throws FacilityException;
 
-	public List<FacilityDto> getAllFacility(String search, boolean justTitle);
+	public PaginationResultDto<FacilityDto> getAllFacility(int pageNum, int pageSize, String search);
 
 	@Transactional
 	public int addFacility(FacilityDto facilityDto);

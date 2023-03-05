@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.appointment.booking.appointmentBooking.constants.ResponseMessages;
 import com.appointment.booking.appointmentBooking.dto.CustomerDto;
+import com.appointment.booking.appointmentBooking.dto.PaginationResultDto;
 import com.appointment.booking.appointmentBooking.exception.CustomerException;
 import com.appointment.booking.appointmentBooking.service.ICustomerService;
 
@@ -40,14 +41,14 @@ public class CustomerController extends BaseController {
 	}
 
 	@GetMapping("/customers")
-	public ResponseEntity<?> getAllCustomers(@RequestParam(required = false) String search) {
-		List<CustomerDto> customers = customerService.getAllCustomers(search, false);
+	public ResponseEntity<?> getAllCustomers(@RequestParam(defaultValue = "1") int pageNum, @RequestParam(defaultValue = "10") int pageSize, @RequestParam(required = false) String search) {
+		PaginationResultDto<CustomerDto> customers = customerService.getAllCustomers(pageNum, pageSize, search, false);
 		return ResponseEntity.ok(customers);
 	}
 	
 	@GetMapping("/customer/names")
 	public ResponseEntity<?> getCustomerNames(@RequestParam(required = false) String search) {
-		List<CustomerDto> customers = customerService.getAllCustomers(search, true);
+		PaginationResultDto<CustomerDto> customers = customerService.getAllCustomers(null, null, search, true);
 		return ResponseEntity.ok(customers);
 	}
 

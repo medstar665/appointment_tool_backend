@@ -2,6 +2,7 @@ package com.appointment.booking.appointmentBooking.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -13,8 +14,11 @@ import com.appointment.booking.appointmentBooking.model.Customer;
 @Transactional
 public interface CustomerRepository extends JpaRepository<Customer, Integer> {
 
-	public List<Customer> findAllByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrEmailContainingIgnoreCase(String firstName,
+	public Long countByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrEmailContainingIgnoreCase(String firstName,
 			String lastName, String email);
+
+	public List<Customer> findAllByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrEmailContainingIgnoreCase(String firstName,
+			String lastName, String email, Pageable pageable);
 
 	@Query("SELECT new com.appointment.booking.appointmentBooking.model.Customer(c.id, c.firstName, c.lastName, c.email) FROM Customer c")
 	public List<Customer> findAllNames();

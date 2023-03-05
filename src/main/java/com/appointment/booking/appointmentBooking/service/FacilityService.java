@@ -3,11 +3,13 @@ package com.appointment.booking.appointmentBooking.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.appointment.booking.appointmentBooking.constants.ResponseMessages;
 import com.appointment.booking.appointmentBooking.dto.FacilityDto;
+import com.appointment.booking.appointmentBooking.dto.PaginationResultDto;
 import com.appointment.booking.appointmentBooking.exception.FacilityException;
 import com.appointment.booking.appointmentBooking.model.Facility;
 import com.appointment.booking.appointmentBooking.repository.FacilityRepository;
@@ -34,22 +36,19 @@ public class FacilityService extends CommonService implements IFacilityService {
 	}
 
 	@Override
-	public List<FacilityDto> getAllFacility(String search, boolean justTitle) {
+	public PaginationResultDto<FacilityDto> getAllFacility(int pageNum, int pageSize, String search) {
 		List<Facility> facilities;
-		if(justTitle) {
-			if (CommonUtil.isEmptyString(search)) {
-				facilities = facilityRepo.findAllTitles();
-			} else {
-				facilities = facilityRepo.findAllTitlesWithFilter(search);
-			}
-		} else {			
-			if (CommonUtil.isEmptyString(search)) {
-				facilities = facilityRepo.findAll();
-			} else {
-				facilities = facilityRepo.findAllByTitleContainingIgnoreCase(search);
-			}
+		Long totalFacilites = 0L;
+		if (CommonUtil.isEmptyString(search)) {
+			Page<Facility> pageResult = facilityRepo.findAll(getPageable(pageNum, pageSize));
+			totalFacilites = pageResult.getTotalElements();
+			facilities = pageResult.getContent();
+		} else {
+			totalFacilites = facilityRepo.countByTitleContainingIgnoreCase(search);
+			facilities = facilityRepo.findAllByTitleContainingIgnoreCase(search, getPageable(pageNum, pageSize));
 		}
-		return facilities.stream().map(this::getDtoFromEntity).collect(Collectors.toList());
+		return PaginationResultDto.<FacilityDto>builder().totalResult(totalFacilites)
+				.result(facilities.stream().map(this::getDtoFromEntity).collect(Collectors.toList())).build();
 	}
 
 	@Override
