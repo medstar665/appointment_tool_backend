@@ -48,7 +48,7 @@ public class CustomerService extends CommonService implements ICustomerService {
 			}
 		} else {
 			if (CommonUtil.isEmptyString(search)) {
-				Page<Customer> pageResult= customerRepo.findAll(getPageable(pageNum, pageSize));
+				Page<Customer> pageResult = customerRepo.findAll(getPageable(pageNum, pageSize));
 				totalCustomers = pageResult.getTotalElements();
 				customers = pageResult.getContent();
 			} else {
@@ -60,7 +60,8 @@ public class CustomerService extends CommonService implements ICustomerService {
 								search, search, search, getPageable(pageNum, pageSize));
 			}
 		}
-		return PaginationResultDto.<CustomerDto>builder().totalResult(totalCustomers)
+		return PaginationResultDto.<CustomerDto>builder().pageNum(pageNum).pageSize(pageSize)
+				.totalResult(totalCustomers)
 				.result(customers.stream().map(this::getDtoFromEntity).collect(Collectors.toList())).build();
 	}
 

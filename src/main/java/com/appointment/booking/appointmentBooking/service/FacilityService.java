@@ -47,7 +47,8 @@ public class FacilityService extends CommonService implements IFacilityService {
 			totalFacilites = facilityRepo.countByTitleContainingIgnoreCase(search);
 			facilities = facilityRepo.findAllByTitleContainingIgnoreCase(search, getPageable(pageNum, pageSize));
 		}
-		return PaginationResultDto.<FacilityDto>builder().totalResult(totalFacilites)
+		return PaginationResultDto.<FacilityDto>builder().pageNum(pageNum).pageSize(pageSize)
+				.totalResult(totalFacilites)
 				.result(facilities.stream().map(this::getDtoFromEntity).collect(Collectors.toList())).build();
 	}
 

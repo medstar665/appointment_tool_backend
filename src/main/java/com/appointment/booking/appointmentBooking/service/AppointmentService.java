@@ -1,7 +1,6 @@
 package com.appointment.booking.appointmentBooking.service;
 
 import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,7 +45,8 @@ public class AppointmentService extends CommonService implements IAppointmentSer
 		Long totalAppointments = appointmentRepo.getTotalAppointment(search, startDate, endDate);
 		List<Appointment> appointments = appointmentRepo.searchAppointment(pageNum, pageSize, search, startDate,
 				endDate);
-		return PaginationResultDto.<AppointmentDto>builder().totalResult(totalAppointments)
+		return PaginationResultDto.<AppointmentDto>builder().pageNum(pageNum).pageSize(pageSize)
+				.totalResult(totalAppointments)
 				.result(appointments.stream().map(this::getDtoFromEntity).collect(Collectors.toList())).build();
 	}
 

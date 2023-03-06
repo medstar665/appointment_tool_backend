@@ -13,6 +13,10 @@ import lombok.NoArgsConstructor;
 @Data
 public class PaginationResultDto<T> {
 
+	private Integer pageNum;
+	
+	private Integer pageSize;
+	
 	private Long totalResult;
 
 	private List<T> result;
