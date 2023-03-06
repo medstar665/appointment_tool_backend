@@ -13,7 +13,7 @@ public interface IFacilityService {
 
 	public FacilityDto getFacility(int id) throws FacilityException;
 
-	public PaginationResultDto<FacilityDto> getAllFacility(int pageNum, int pageSize, String search);
+	public PaginationResultDto<FacilityDto> getAllFacility(Integer pageNum, Integer pageSize, String search);
 
 	@Transactional
 	public int addFacility(FacilityDto facilityDto);

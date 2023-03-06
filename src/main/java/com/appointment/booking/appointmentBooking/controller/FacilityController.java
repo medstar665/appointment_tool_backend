@@ -46,6 +46,12 @@ public class FacilityController extends BaseController {
 		return ResponseEntity.ok(facilites);
 	}
 
+	@GetMapping("/facilities-without-page")
+	public ResponseEntity<?> getAllFacilities() {
+		PaginationResultDto<FacilityDto> facilites = facilityService.getAllFacility(null, null, null);
+		return ResponseEntity.ok(facilites);
+	}
+
 	@PostMapping("/facility")
 	public ResponseEntity<?> addFacility(@Valid @RequestBody FacilityDto facility) {
 		int id = facilityService.addFacility(facility);

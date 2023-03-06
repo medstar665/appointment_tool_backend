@@ -36,16 +36,20 @@ public class FacilityService extends CommonService implements IFacilityService {
 	}
 
 	@Override
-	public PaginationResultDto<FacilityDto> getAllFacility(int pageNum, int pageSize, String search) {
+	public PaginationResultDto<FacilityDto> getAllFacility(Integer pageNum, Integer pageSize, String search) {
 		List<Facility> facilities;
 		Long totalFacilites = 0L;
-		if (CommonUtil.isEmptyString(search)) {
-			Page<Facility> pageResult = facilityRepo.findAll(getPageable(pageNum, pageSize));
-			totalFacilites = pageResult.getTotalElements();
-			facilities = pageResult.getContent();
+		if (pageNum == null) {
+			facilities = facilityRepo.findAll();
 		} else {
-			totalFacilites = facilityRepo.countByTitleContainingIgnoreCase(search);
-			facilities = facilityRepo.findAllByTitleContainingIgnoreCase(search, getPageable(pageNum, pageSize));
+			if (CommonUtil.isEmptyString(search)) {
+				Page<Facility> pageResult = facilityRepo.findAll(getPageable(pageNum, pageSize));
+				totalFacilites = pageResult.getTotalElements();
+				facilities = pageResult.getContent();
+			} else {
+				totalFacilites = facilityRepo.countByTitleContainingIgnoreCase(search);
+				facilities = facilityRepo.findAllByTitleContainingIgnoreCase(search, getPageable(pageNum, pageSize));
+			}
 		}
 		return PaginationResultDto.<FacilityDto>builder().pageNum(pageNum).pageSize(pageSize)
 				.totalResult(totalFacilites)
